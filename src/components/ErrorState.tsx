@@ -32,9 +32,9 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    fontSize: 22,
-    lineHeight: 28,
-    fontWeight: '500',
+    fontSize: 18,
+    lineHeight: 26,
+    fontWeight: '700',
     color: colors.textPrimary,
     marginBottom: spacing.lg,
   },

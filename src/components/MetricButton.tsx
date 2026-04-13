@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
   count: {
     fontSize: 12,
     color: colors.textSecondary,
+    paddingRight: spacing.xs,
     fontWeight: '500',
   },
   activeText: {

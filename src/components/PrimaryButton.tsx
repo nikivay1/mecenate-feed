@@ -50,7 +50,7 @@ export const PrimaryButton = ({
 const styles = StyleSheet.create({
   button: {
     minHeight: 44,
-    borderRadius: radius.pill,
+    borderRadius: radius.md,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',

@@ -4,21 +4,31 @@ import type { PostsResponse } from '../types/feed';
 type GetPostsParams = {
   cursor?: string | null;
   limit?: number;
+  tier?: 'free' | 'paid';
   simulateError?: boolean;
 };
 
 export async function getPosts({
   cursor = null,
   limit = 10,
+  tier,
   simulateError = false,
 }: GetPostsParams = {}): Promise<PostsResponse> {
-  const query = [
-    `limit=${limit}`,
-    cursor ? `cursor=${encodeURIComponent(cursor)}` : null,
-    simulateError ? 'simulate_error=true' : null,
-  ]
-    .filter(Boolean)
-    .join('&');
+  const params = new URLSearchParams();
 
-  return apiFetch<PostsResponse>(`/posts?${query}`);
+  params.append('limit', String(limit));
+
+  if (cursor) {
+    params.append('cursor', cursor);
+  }
+
+  if (tier) {
+    params.append('tier', tier);
+  }
+
+  if (simulateError) {
+    params.append('simulate_error', 'true');
+  }
+
+  return apiFetch<PostsResponse>(`/posts?${params.toString()}`);
 }
