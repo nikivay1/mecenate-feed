@@ -15,6 +15,7 @@ type PostCardProps = {
   likesCount: number;
   commentsCount: number;
   isPreviewCollapsed?: boolean;
+  isLiked: boolean;
 };
 
 export const PostCard = ({
@@ -25,6 +26,7 @@ export const PostCard = ({
   previewText,
   likesCount,
   commentsCount,
+  isLiked = false
 }: PostCardProps) => {
   const [isPreviewExpanded, setIsPreviewExpanded] = React.useState(false);
   const [isPreviewLong, setIsPreviewLong] = React.useState<boolean | null>(null);
@@ -77,7 +79,7 @@ export const PostCard = ({
         )}
 
         <View style={styles.metrics}>
-          <MetricButton kind="like" count={likesCount} />
+          <MetricButton kind="like" count={likesCount} active={isLiked}/>
           <MetricButton kind="comment" count={commentsCount} />
         </View>
       </View>

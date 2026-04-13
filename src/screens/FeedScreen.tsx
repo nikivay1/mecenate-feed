@@ -66,6 +66,7 @@ export const FeedScreen = () => {
         title={item.title}
         previewText={item.preview}
         likesCount={item.likesCount}
+        isLiked={item.isLiked}
         commentsCount={item.commentsCount}
       />
     );
