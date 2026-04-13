@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from './PrimaryButton';
 import { colors } from '../tokens/colors';
 import { spacing } from '../tokens/spacing';
@@ -11,11 +11,7 @@ type ErrorStateProps = {
 export const ErrorState = ({ onRetry }: ErrorStateProps) => {
   return (
     <View style={styles.container}>
-      <Image
-        source={require('../../assets/error-illustration.png')}
-        style={styles.image}
-        resizeMode="contain"
-      />
+      <Text style={styles.emoji}>🪼</Text>
       <Text style={styles.title}>Не удалось загрузить публикации</Text>
       <PrimaryButton title="Повторить" onPress={onRetry} style={styles.button} />
     </View>
@@ -29,10 +25,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     backgroundColor: colors.background,
   },
-  image: {
-    width: 96,
-    height: 96,
-    alignSelf: 'center',
+  emoji: {
+    fontSize: 56,
+    textAlign: 'center',
     marginBottom: spacing.lg,
   },
   title: {

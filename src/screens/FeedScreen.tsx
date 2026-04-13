@@ -1,74 +1,117 @@
 import React from 'react';
-import { FlatList, SafeAreaView, StyleSheet } from 'react-native';
-import { PostCard } from '../components/PostCard';
-import { PaidPostCard } from '../components/PaidPostCard';
-import { colors } from '../tokens/colors';
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from 'react-native';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-const mockData = [
-  {
-    id: '1',
-    type: 'free',
-    authorName: 'Петр Федько',
-    authorAvatar: 'https://i.pravatar.cc/100?img=1',
-    imageUrl: 'https://picsum.photos/600/400?random=1',
-    title: 'Подготовка к лету',
-    previewText:
-      'Когда вы начинаете бегать по утрам, но чувствуете, что каждый шаг дается особенно тяжело.',
-    likesCount: 12,
-    commentsCount: 19,
-  },
-  {
-    id: '2',
-    type: 'free',
-    authorName: 'Леша Крид',
-    authorAvatar: 'https://i.pravatar.cc/100?img=2',
-    imageUrl: 'https://picsum.photos/600/400?random=2',
-    title: 'Подготовка к лету',
-    previewText:
-      'Когда вы начинаете бегать по утрам, но чувствуете, что каждый шаг дается особенно тяжело.',
-    likesCount: 12,
-    commentsCount: 19,
-  },
-  {
-    id: '3',
-    type: 'paid',
-    authorName: 'Петр Федько',
-    authorAvatar: 'https://i.pravatar.cc/100?img=1',
-    imageUrl: 'https://picsum.photos/600/400?random=3',
-  },
-];
+import { getPosts } from '../api/feed';
+import { ErrorState } from '../components/ErrorState';
+import { PaidPostCard } from '../components/PaidPostCard';
+import { PostCard } from '../components/PostCard';
+import type { Post } from '../types/feed';
+import { colors } from '../tokens/colors';
+import { spacing } from '../tokens/spacing';
 
 export const FeedScreen = () => {
+  const {
+    data,
+    isPending,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isRefetching,
+  } = useInfiniteQuery({
+    queryKey: ['feed'],
+    initialPageParam: null as string | null,
+    queryFn: ({ pageParam }) =>
+      getPosts({
+        cursor: pageParam,
+        limit: 10,
+      }),
+    getNextPageParam: (lastPage) =>
+      lastPage.data.hasMore ? lastPage.data.nextCursor : null,
+  });
+
+  const posts = data?.pages.flatMap((page) => page.data.posts) ?? [];
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const renderItem = ({ item }: { item: Post }) => {
+    if (item.tier === 'paid') {
+      return (
+        <PaidPostCard
+          authorName={item.author.displayName}
+          authorAvatar={item.author.avatarUrl}
+          imageUrl={item.coverUrl}
+        />
+      );
+    }
+
+    return (
+      <PostCard
+        authorName={item.author.displayName}
+        authorAvatar={item.author.avatarUrl}
+        imageUrl={item.coverUrl}
+        title={item.title}
+        previewText={item.preview}
+        likesCount={item.likesCount}
+        commentsCount={item.commentsCount}
+      />
+    );
+  };
+
+  if (isError) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <ErrorState onRetry={() => refetch()} />
+      </SafeAreaView>
+    );
+  }
+
+  if (isPending) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loader}>
+          <ActivityIndicator />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
-        data={mockData}
+        data={posts}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => {
-          if (item.type === 'paid') {
-            return (
-              <PaidPostCard
-                authorName={item.authorName}
-                authorAvatar={item.authorAvatar}
-                imageUrl={item.imageUrl}
-              />
-            );
-          }
-
-          return (
-            <PostCard
-              authorName={item.authorName}
-              authorAvatar={item.authorAvatar}
-              imageUrl={item.imageUrl}
-              title={item.title}
-              previewText={item.previewText}
-              likesCount={item.likesCount}
-              commentsCount={item.commentsCount}
-            />
-          );
-        }}
+        renderItem={renderItem}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching && !isFetchingNextPage}
+            onRefresh={refetch}
+          />
+        }
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View style={styles.footerLoader}>
+              <ActivityIndicator />
+            </View>
+          ) : null
+        }
       />
     </SafeAreaView>
   );
@@ -80,6 +123,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   content: {
-    paddingVertical: 12,
+    paddingVertical: spacing.md,
+  },
+  loader: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  footerLoader: {
+    paddingVertical: spacing.lg,
   },
 });
