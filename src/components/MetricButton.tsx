@@ -4,20 +4,24 @@ import { colors } from '../tokens/colors';
 import { radius } from '../tokens/radius';
 import { spacing } from '../tokens/spacing';
 
+import LikeIcon from '../assets/icons/mecenatka_solid.svg';
+import CommentIcon from '../assets/icons/comment_soild.svg';
+
 type MetricButtonProps = {
-  icon: string;
+  kind: 'like' | 'comment';
   count: number;
   active?: boolean;
 };
 
 export const MetricButton = ({
-  icon,
+  kind,
   count,
   active = false,
 }: MetricButtonProps) => {
+  const Icon = kind === 'like' ? LikeIcon : CommentIcon;
   return (
     <View style={[styles.container, active && styles.activeContainer]}>
-      <Text style={[styles.icon, active && styles.activeText]}>{icon}</Text>
+      <Icon style={[styles.icon, active && styles.iconActive]} />
       <Text style={[styles.count, active && styles.activeText]}>{count}</Text>
     </View>
   );
@@ -25,8 +29,8 @@ export const MetricButton = ({
 
 const styles = StyleSheet.create({
   container: {
-    height: 28,
     paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
     borderRadius: radius.pill,
     backgroundColor: colors.surfaceMuted,
     flexDirection: 'row',
@@ -37,8 +41,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF4D94',
   },
   icon: {
-    fontSize: 12,
     color: colors.textSecondary,
+    height: 24,
+    width: 24
+  },
+  iconActive: {
+    color: colors.surface
   },
   count: {
     fontSize: 12,

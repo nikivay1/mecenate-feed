@@ -21,22 +21,22 @@ export const AuthorRow = ({ name, avatarUrl }: AuthorRowProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 48,
     paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surface,
   },
   avatar: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 40,
+    height: 40,
+    borderRadius: 99,
     marginRight: spacing.sm,
   },
   name: {
     flex: 1,
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 15,
+    fontWeight: '700',
     color: colors.textPrimary,
   },
 });

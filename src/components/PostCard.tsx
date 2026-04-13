@@ -9,10 +9,10 @@ type PostCardProps = {
   authorName: string;
   authorAvatar: string;
   imageUrl: string;
-  title?: string;
-  previewText?: string;
-  likesCount?: number;
-  commentsCount?: number;
+  title: string;
+  previewText: string;
+  likesCount: number;
+  commentsCount: number;
   isPreviewCollapsed?: boolean;
 };
 
@@ -40,8 +40,8 @@ export const PostCard = ({
         </Text>
 
         <View style={styles.metrics}>
-          <MetricButton icon="♡" count={likesCount!} />
-          <MetricButton icon="💬" count={commentsCount!} />
+          <MetricButton kind="like" count={likesCount} />
+          <MetricButton kind="comment" count={commentsCount} />
         </View>
       </View>
     </View>
@@ -55,8 +55,9 @@ const styles = StyleSheet.create({
   },
   cover: {
     width: '100%',
-    aspectRatio: 1.55,
+    aspectRatio: 1,
     backgroundColor: colors.surfaceMuted,
+    overflow: 'hidden',
   },
   content: {
     paddingHorizontal: spacing.lg,
@@ -64,14 +65,14 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
   },
   title: {
-    fontSize: 22,
+    fontSize: 18,
     lineHeight: 26,
     fontWeight: '500',
     color: colors.textPrimary,
     marginBottom: spacing.sm,
   },
   preview: {
-    fontSize: 14,
+    fontSize: 15,
     lineHeight: 20,
     color: colors.textPrimary,
     marginBottom: spacing.md,

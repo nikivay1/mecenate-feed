@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import IllustrationSticker from '../assets/icons/illustration_sticker.svg';
 import { PrimaryButton } from './PrimaryButton';
 import { colors } from '../tokens/colors';
 import { spacing } from '../tokens/spacing';
@@ -11,7 +12,7 @@ type ErrorStateProps = {
 export const ErrorState = ({ onRetry }: ErrorStateProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.emoji}>🪼</Text>
+      <IllustrationSticker width={112} height={112} style={styles.image} />
       <Text style={styles.title}>Не удалось загрузить публикации</Text>
       <PrimaryButton title="Повторить" onPress={onRetry} style={styles.button} />
     </View>
@@ -25,9 +26,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     backgroundColor: colors.background,
   },
-  emoji: {
-    fontSize: 56,
-    textAlign: 'center',
+  image: {
+    alignSelf: 'center',
     marginBottom: spacing.lg,
   },
   title: {
