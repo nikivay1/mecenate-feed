@@ -5,6 +5,7 @@ import { radius } from '../tokens/radius';
 import { spacing } from '../tokens/spacing';
 
 import LikeIcon from '../assets/icons/mecenatka_solid.svg';
+import LikeIconChecd from '../assets/icons/mecenatka_solid_checed.svg';
 import CommentIcon from '../assets/icons/comment_soild.svg';
 
 type MetricButtonProps = {
@@ -18,7 +19,13 @@ export const MetricButton = ({
   count,
   active = false,
 }: MetricButtonProps) => {
-  const Icon = kind === 'like' ? LikeIcon : CommentIcon;
+  const Icon =
+    kind === 'like'
+      ? active
+        ? LikeIconChecd
+        : LikeIcon
+      : CommentIcon;
+
   return (
     <View style={[styles.container, active && styles.activeContainer]}>
       <Icon style={[styles.icon, active && styles.iconActive]} />
