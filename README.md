@@ -26,3 +26,13 @@
    ```bash
    npx expo start
    ```
+
+
+## Структура
+
+- `src/api` — работа с API
+- `src/screens` — экран Feed
+- `src/components` — UI-компоненты
+- `src/types` — типы данных
+- `src/tokens` — дизайн-токены
+- `src/stores` — MobX store
