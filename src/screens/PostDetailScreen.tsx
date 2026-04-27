@@ -14,13 +14,17 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { PostCard } from '../components/PostCard';
 import { CommentsSectionHeader } from '../components/CommentsSectionHeader';
-
-import { getPostById, getPostComments } from '../api/feed';
 import { CommentItem } from '../components/CommentItem';
 import { ErrorState } from '../components/ErrorState';
+
+import { usePostRealtime } from '../hooks/usePostRealtime';
 import { useTogglePostLike } from '../hooks/useTogglePostLike';
+
+import { getPostById, getPostComments } from '../api/feed';
+
 import type { RootStackParamList } from '../navigation/types';
 import type { Comment } from '../types/feed';
+
 import { colors } from '../tokens/colors';
 import { spacing } from '../tokens/spacing';
 
@@ -44,6 +48,11 @@ export const PostDetailScreen = ({
   } = useQuery({
     queryKey: ['post', postId],
     queryFn: () => getPostById(postId),
+  });
+
+  usePostRealtime({
+    postId,
+    enabled: Boolean(postData?.data.post),
   });
 
   const {
