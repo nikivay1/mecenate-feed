@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AuthorRow } from './AuthorRow';
 import { MetricButton } from './MetricButton';
 import { colors } from '../tokens/colors';
+import { fontSizes } from '../tokens/fontSizes';
 import { spacing } from '../tokens/spacing';
 
 type PostCardProps = {
@@ -114,14 +115,14 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
   },
   title: {
-    fontSize: 18,
+    fontSize: fontSizes.xxl,
     lineHeight: 26,
     fontWeight: '500',
     color: colors.textPrimary,
     marginBottom: spacing.sm,
   },
   preview: {
-    fontSize: 15,
+    fontSize: fontSizes.base,
     lineHeight: 20,
     color: colors.textPrimary,
     marginBottom: spacing.md,
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   previewCollapsed: {
-    fontSize: 15,
+    fontSize: fontSizes.base,
     lineHeight: 20,
     color: colors.textPrimary,
   },
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     left: spacing.lg,
     right: spacing.lg,
     opacity: 0,
-    fontSize: 15,
+    fontSize: fontSizes.base,
     lineHeight: 20,
   },
   showMoreOverlay: {
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
   showMore: {
     paddingLeft: spacing.xs,
     backgroundColor: colors.surface,
-    fontSize: 15,
+    fontSize: fontSizes.base,
     lineHeight: 20,
     color: colors.primary,
   },

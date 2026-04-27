@@ -3,6 +3,7 @@ import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { AuthorRow } from './AuthorRow';
 import { PrimaryButton } from './PrimaryButton';
 import { colors } from '../tokens/colors';
+import { fontSizes } from '../tokens/fontSizes';
 import { radius } from '../tokens/radius';
 import { spacing } from '../tokens/spacing';
 
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
   },
   message: {
     color: colors.surface,
-    fontSize: 15,
+    fontSize: fontSizes.base,
     lineHeight: 20,
     fontWeight: '600',
     textAlign: 'center',

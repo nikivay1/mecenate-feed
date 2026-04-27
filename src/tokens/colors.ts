@@ -10,6 +10,8 @@ export const colors = {
   primaryPressed: '#4E11A4',
   primaryDark: '#3A0D7B',
   primaryLight: '#D5C9FF',
+  liked: '#FF2B75',
+  likedBox: '#FF2B75',
   danger: '#D92D20',
   overlay: 'rgba(18, 18, 23, 0.45)',
 };

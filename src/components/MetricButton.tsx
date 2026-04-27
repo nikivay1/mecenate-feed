@@ -13,6 +13,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { colors } from '../tokens/colors';
+import { fontSizes } from '../tokens/fontSizes';
 import { radius } from '../tokens/radius';
 import { spacing } from '../tokens/spacing';
 
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   activeContainer: {
-    backgroundColor: '#FF4D94',
+    backgroundColor: colors.likedBox,
   },
   pressed: {
     opacity: 0.8,
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
     width: 24
   },
   count: {
-    fontSize: 12,
+    fontSize: fontSizes.xs,
     color: colors.textSecondary,
     paddingRight: spacing.xs,
     fontWeight: '500',

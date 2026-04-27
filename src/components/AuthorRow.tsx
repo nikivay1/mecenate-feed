@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../tokens/colors';
+import { fontSizes } from '../tokens/fontSizes';
 import { spacing } from '../tokens/spacing';
 
 type AuthorRowProps = {
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
   },
   name: {
     flex: 1,
-    fontSize: 15,
+    fontSize: fontSizes.base,
     fontWeight: '700',
     color: colors.textPrimary,
   },

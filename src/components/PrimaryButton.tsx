@@ -7,6 +7,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { colors } from '../tokens/colors';
+import { fontSizes } from '../tokens/fontSizes';
 import { radius } from '../tokens/radius';
 import { spacing } from '../tokens/spacing';
 
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.surface,
-    fontSize: 14,
+    fontSize: fontSizes.md,
     fontWeight: '600',
   },
 });

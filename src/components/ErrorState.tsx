@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import IllustrationSticker from '../assets/icons/illustration_sticker.svg';
 import { PrimaryButton } from './PrimaryButton';
 import { colors } from '../tokens/colors';
+import { fontSizes } from '../tokens/fontSizes';
 import { spacing } from '../tokens/spacing';
 
 type ErrorStateProps = {
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: fontSizes.xxl,
     lineHeight: 26,
     fontWeight: '700',
     color: colors.textPrimary,

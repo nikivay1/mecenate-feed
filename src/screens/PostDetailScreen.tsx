@@ -2,9 +2,7 @@ import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Pressable,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -26,6 +24,7 @@ import type { RootStackParamList } from '../navigation/types';
 import type { Comment } from '../types/feed';
 
 import { colors } from '../tokens/colors';
+import { fontSizes } from '../tokens/fontSizes';
 import { spacing } from '../tokens/spacing';
 
 type PostDetailScreenProps = NativeStackScreenProps<
@@ -35,7 +34,6 @@ type PostDetailScreenProps = NativeStackScreenProps<
 
 export const PostDetailScreen = ({
   route,
-  navigation,
 }: PostDetailScreenProps) => {
   const { postId } = route.params;
   const toggleLikeMutation = useTogglePostLike();
@@ -87,8 +85,17 @@ export const PostDetailScreen = ({
     fetchNextPage();
   };
 
-  const renderComment = ({ item }: { item: Comment }) => {
-    return <CommentItem comment={item} />;
+  const renderComment = ({ item, index }: { item: Comment; index: number }) => {
+    const mockLikes = [2, 3, 2, 2];
+    const mockLiked = [false, true, false, false];
+
+    return (
+      <CommentItem
+        comment={item}
+        likesCount={mockLikes[index % mockLikes.length] ?? 0}
+        isLiked={mockLiked[index % mockLiked.length] ?? false}
+      />
+    );
   };
 
   if (isPostPending) {
@@ -117,8 +124,6 @@ export const PostDetailScreen = ({
 
   return (
     <View style={styles.root}>
-      <StatusBar style="dark" translucent />
-
       <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
         <FlatList
           data={comments}
@@ -181,7 +186,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   backText: {
-    fontSize: 16,
+    fontSize: fontSizes.lg,
     color: colors.primary,
     fontWeight: '600',
   },

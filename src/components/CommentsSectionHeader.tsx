@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../tokens/colors';
+import { fontSizes } from '../tokens/fontSizes';
 import { spacing } from '../tokens/spacing';
 
 type CommentsSectionHeaderProps = {
@@ -30,14 +31,14 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.md,
   },
   title: {
-    fontSize: 20,
-    lineHeight: 24,
+    fontSize: fontSizes.base,
+    lineHeight: 20,
     fontWeight: '700',
     color: colors.textSecondary,
   },
   sort: {
-    fontSize: 20,
-    lineHeight: 24,
+    fontSize: fontSizes.base,
+    lineHeight: 20,
     fontWeight: '400',
     color: colors.primary,
   },

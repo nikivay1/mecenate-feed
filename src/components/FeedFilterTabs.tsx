@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../tokens/colors';
+import { fontSizes } from '../tokens/fontSizes';
 import { radius } from '../tokens/radius';
 import { spacing } from '../tokens/spacing';
 
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   text: {
-    fontSize: 13,
+    fontSize: fontSizes.sm,
     lineHeight: 18,
     fontWeight: '400',
     color: colors.textSecondary,

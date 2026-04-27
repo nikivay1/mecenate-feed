@@ -4,6 +4,7 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import LikeIcon from '../assets/icons/mecenatka_solid.svg';
 import type { Comment } from '../types/feed';
 import { colors } from '../tokens/colors';
+import { fontSizes } from '../tokens/fontSizes';
 import { spacing } from '../tokens/spacing';
 
 type CommentItemProps = {
@@ -36,7 +37,7 @@ export const CommentItem = ({
           <LikeIcon
             width={22}
             height={22}
-            color={isLiked ? '#FF4D94' : colors.textSecondary}
+            color={isLiked ? colors.liked : colors.textSecondary}
           />
           <Text style={[styles.likesCount, isLiked && styles.likesCountActive]}>
             {likesCount}
@@ -67,14 +68,14 @@ const styles = StyleSheet.create({
     paddingRight: spacing.md,
   },
   authorName: {
-    fontSize: 18,
+    fontSize: fontSizes.xxl,
     lineHeight: 22,
     fontWeight: '700',
     color: colors.textPrimary,
     marginBottom: 2,
   },
   text: {
-    fontSize: 17,
+    fontSize: fontSizes.xl,
     lineHeight: 22,
     fontWeight: '400',
     color: colors.textPrimary,
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   likesCount: {
-    fontSize: 16,
+    fontSize: fontSizes.lg,
     lineHeight: 20,
     fontWeight: '600',
     color: colors.textSecondary,

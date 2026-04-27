@@ -5,6 +5,7 @@ import { AuthorRow } from './AuthorRow';
 import { MetricButton } from './MetricButton';
 import type { Post } from '../types/feed';
 import { colors } from '../tokens/colors';
+import { fontSizes } from '../tokens/fontSizes';
 import { spacing } from '../tokens/spacing';
 
 type PostDetailHeaderProps = {
@@ -70,14 +71,14 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.md,
   },
   title: {
-    fontSize: 26,
+    fontSize: fontSizes.display,
     lineHeight: 31,
     fontWeight: '700',
     color: colors.textPrimary,
     marginBottom: spacing.md,
   },
   body: {
-    fontSize: 22,
+    fontSize: fontSizes.titleLg,
     lineHeight: 29,
     color: colors.textPrimary,
     marginBottom: spacing.lg,
@@ -93,13 +94,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   commentsTitle: {
-    fontSize: 20,
+    fontSize: fontSizes.title,
     lineHeight: 24,
     fontWeight: '700',
     color: colors.textSecondary,
   },
   sortText: {
-    fontSize: 20,
+    fontSize: fontSizes.title,
     lineHeight: 24,
     color: colors.primary,
   },
