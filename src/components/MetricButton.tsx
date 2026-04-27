@@ -1,10 +1,17 @@
 import React from 'react';
+import * as Haptics from 'expo-haptics';
 import {
   type GestureResponderEvent,
   Pressable,
   StyleSheet,
-  Text,
 } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { colors } from '../tokens/colors';
 import { radius } from '../tokens/radius';
 import { spacing } from '../tokens/spacing';
@@ -35,9 +42,31 @@ export const MetricButton = ({
         : LikeIcon
       : CommentIcon;
   const isPressable = Boolean(onPress) && !disabled;
+  const countScale = useSharedValue(1);
+  const hasRendered = React.useRef(false);
+  const countAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: countScale.value }],
+  }));
+
+  React.useEffect(() => {
+    if (kind !== 'like' || !hasRendered.current) {
+      hasRendered.current = true;
+      return;
+    }
+
+    countScale.value = withSequence(
+      withTiming(1.18, { duration: 120 }),
+      withSpring(1, { damping: 12, stiffness: 220 })
+    );
+  }, [count, countScale, kind]);
 
   const handlePress = (event: GestureResponderEvent) => {
     event.stopPropagation();
+
+    if (kind === 'like') {
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+
     onPress?.();
   };
 
@@ -49,15 +78,22 @@ export const MetricButton = ({
       style={({ pressed }) => [
         styles.container,
         active && styles.activeContainer,
-        disabled && styles.disabled,
-        pressed && styles.pressed,
+        pressed && !disabled && styles.pressed,
       ]}
     >
       <Icon
         color={active ? colors.surface : colors.textSecondary}
         style={styles.icon}
       />
-      <Text style={[styles.count, active && styles.activeText]}>{count}</Text>
+      <Animated.Text
+        style={[
+          styles.count,
+          active && styles.activeText,
+          countAnimatedStyle,
+        ]}
+      >
+        {count}
+      </Animated.Text>
     </Pressable>
   );
 };
@@ -74,9 +110,6 @@ const styles = StyleSheet.create({
   },
   activeContainer: {
     backgroundColor: '#FF4D94',
-  },
-  disabled: {
-    opacity: 0.64,
   },
   pressed: {
     opacity: 0.8,

@@ -72,3 +72,19 @@ export type LikePostResponse = {
     likesCount: number;
   };
 };
+
+// типы ws-событий для коммментариев
+export type RealtimeEvent =
+  | {
+      type: 'ping';
+    }
+  | {
+      type: 'like_updated';
+      postId: string;
+      likesCount: number;
+    }
+  | {
+      type: 'comment_added';
+      postId: string;
+      comment: Comment;
+    };
