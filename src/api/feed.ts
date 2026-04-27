@@ -1,6 +1,7 @@
 import { apiFetch } from './client';
 import type {
   CommentsResponse,
+  CommentCreatedResponse,
   LikePostResponse,
   PostDetailResponse,
   PostsResponse,
@@ -69,5 +70,22 @@ export async function getPostComments({
 export async function togglePostLike(postId: string): Promise<LikePostResponse> {
   return apiFetch<LikePostResponse>(`/posts/${postId}/like`, {
     method: 'POST',
+  });
+}
+
+type CreatePostCommentParams = {
+  postId: string;
+  text: string;
+};
+
+export async function createPostComment({
+  postId,
+  text,
+}: CreatePostCommentParams): Promise<CommentCreatedResponse> {
+  return apiFetch<CommentCreatedResponse>(`/posts/${postId}/comments`, {
+    method: 'POST',
+    body: JSON.stringify({
+      text,
+    }),
   });
 }

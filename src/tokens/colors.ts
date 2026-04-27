@@ -10,6 +10,7 @@ export const colors = {
   primaryPressed: '#4E11A4',
   primaryDark: '#3A0D7B',
   primaryLight: '#D5C9FF',
+  borderInput: '#EFF2F7',
   liked: '#FF2B75',
   likedBox: '#FF2B75',
   danger: '#D92D20',

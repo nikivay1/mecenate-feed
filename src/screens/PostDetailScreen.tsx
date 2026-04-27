@@ -2,26 +2,47 @@ import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
   StyleSheet,
+  Text,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import {
+  InfiniteData,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { PostCard } from '../components/PostCard';
 import { CommentsSectionHeader } from '../components/CommentsSectionHeader';
 import { CommentItem } from '../components/CommentItem';
 import { ErrorState } from '../components/ErrorState';
+import { CommentComposer } from '../components/CommentComposer';
 
 import { usePostRealtime } from '../hooks/usePostRealtime';
 import { useTogglePostLike } from '../hooks/useTogglePostLike';
 
-import { getPostById, getPostComments } from '../api/feed';
+import {
+  createPostComment,
+  getPostById,
+  getPostComments,
+} from '../api/feed';
 
 import type { RootStackParamList } from '../navigation/types';
-import type { Comment } from '../types/feed';
+
+import type {
+  Comment,
+  CommentsResponse,
+  PostDetailResponse,
+  PostsResponse,
+} from '../types/feed';
 
 import { colors } from '../tokens/colors';
 import { fontSizes } from '../tokens/fontSizes';
@@ -34,9 +55,11 @@ type PostDetailScreenProps = NativeStackScreenProps<
 
 export const PostDetailScreen = ({
   route,
+  navigation,
 }: PostDetailScreenProps) => {
   const { postId } = route.params;
   const toggleLikeMutation = useTogglePostLike();
+  const queryClient = useQueryClient();
 
   const {
     data: postData,
@@ -73,6 +96,94 @@ export const PostDetailScreen = ({
     enabled: Boolean(postData?.data.post),
   });
 
+  const createCommentMutation = useMutation({
+    mutationFn: createPostComment,
+    onSuccess: (response) => {
+      const newComment = response.data.comment;
+
+      queryClient.setQueryData<InfiniteData<CommentsResponse>>(
+        ['post-comments', postId],
+        (oldData) => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          const alreadyExists = oldData.pages.some((page) =>
+            page.data.comments.some((comment) => comment.id === newComment.id)
+          );
+
+          if (alreadyExists) {
+            return oldData;
+          }
+
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page, index) => {
+              if (index !== 0) {
+                return page;
+              }
+
+              return {
+                ...page,
+                data: {
+                  ...page.data,
+                  comments: [newComment, ...page.data.comments],
+                },
+              };
+            }),
+          };
+        }
+      );
+
+      queryClient.setQueryData<PostDetailResponse>(
+        ['post', postId],
+        (oldData) => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          return {
+            ...oldData,
+            data: {
+              ...oldData.data,
+              post: {
+                ...oldData.data.post,
+                commentsCount: oldData.data.post.commentsCount + 1,
+              },
+            },
+          };
+        }
+      );
+
+      queryClient.setQueriesData<InfiniteData<PostsResponse>>(
+        { queryKey: ['feed'] },
+        (oldData) => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              data: {
+                ...page.data,
+                posts: page.data.posts.map((post) =>
+                  post.id === postId
+                    ? {
+                        ...post,
+                        commentsCount: post.commentsCount + 1,
+                      }
+                    : post
+                ),
+              },
+            })),
+          };
+        }
+      );
+    },
+  });
+
   const post = postData?.data.post;
   const comments =
     commentsData?.pages.flatMap((page) => page.data.comments) ?? [];
@@ -83,6 +194,13 @@ export const PostDetailScreen = ({
     }
 
     fetchNextPage();
+  };
+
+  const handleSubmitComment = (text: string) => {
+    createCommentMutation.mutate({
+      postId,
+      text,
+    });
   };
 
   const renderComment = ({ item, index }: { item: Comment; index: number }) => {
@@ -125,43 +243,54 @@ export const PostDetailScreen = ({
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
-        <FlatList
-          data={comments}
-          keyExtractor={(item) => item.id}
-          renderItem={renderComment}
-          ListHeaderComponent={
-            <>
-              <PostCard
-                authorName={post.author.displayName}
-                authorAvatar={post.author.avatarUrl}
-                imageUrl={post.coverUrl}
-                title={post.title}
-                previewText={post.body || post.preview}
-                likesCount={post.likesCount}
-                commentsCount={post.commentsCount}
-                isLiked={post.isLiked}
-                isLikeLoading={
-                  toggleLikeMutation.isPending &&
-                  toggleLikeMutation.variables?.id === post.id
-                }
-                onLikePress={() => toggleLikeMutation.mutate(post)}
-              />
 
-              <CommentsSectionHeader commentsCount={post.commentsCount} />
-            </>
-          }
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-          onEndReached={handleLoadMoreComments}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={
-            isCommentsPending || isFetchingNextPage ? (
-              <View style={styles.footerLoader}>
-                <ActivityIndicator />
-              </View>
-            ) : null
-          }
-        />
+        <KeyboardAvoidingView
+          style={styles.keyboardView}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={0}
+        >
+          <FlatList
+            data={comments}
+            keyExtractor={(item) => item.id}
+            renderItem={renderComment}
+            ListHeaderComponent={
+              <>
+                <PostCard
+                  authorName={post.author.displayName}
+                  authorAvatar={post.author.avatarUrl}
+                  imageUrl={post.coverUrl}
+                  title={post.title}
+                  previewText={post.body || post.preview}
+                  likesCount={post.likesCount}
+                  commentsCount={post.commentsCount}
+                  isLiked={post.isLiked}
+                  isLikeLoading={
+                    toggleLikeMutation.isPending &&
+                    toggleLikeMutation.variables?.id === post.id
+                  }
+                  onLikePress={() => toggleLikeMutation.mutate(post)}
+                />
+
+                <CommentsSectionHeader commentsCount={post.commentsCount} />
+              </>
+            }
+            contentContainerStyle={styles.content}
+            showsVerticalScrollIndicator={false}
+            onEndReached={handleLoadMoreComments}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={
+              isCommentsPending || isFetchingNextPage ? (
+                <View style={styles.footerLoader}>
+                  <ActivityIndicator />
+                </View>
+              ) : null
+            }
+          />
+          <CommentComposer
+            loading={createCommentMutation.isPending}
+            onSubmit={handleSubmitComment}
+          />
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </View>
   );
@@ -175,6 +304,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.surface,
+  },
+  keyboardView: {
+    flex: 1,
   },
   content: {
     paddingBottom: spacing.xl,

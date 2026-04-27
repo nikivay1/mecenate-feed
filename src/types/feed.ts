@@ -88,3 +88,10 @@ export type RealtimeEvent =
       postId: string;
       comment: Comment;
     };
+
+export type CommentCreatedResponse = {
+  ok: boolean;
+  data: {
+    comment: Comment;
+  };
+};
