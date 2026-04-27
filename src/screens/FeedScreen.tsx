@@ -6,11 +6,20 @@ import {
   SafeAreaView,
   StyleSheet,
   View,
+  Pressable,
 } from 'react-native';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../navigation/types';
+
 import { getPosts } from '../api/feed';
 import { ErrorState } from '../components/ErrorState';
+import {
+  FeedFilterTabs,
+  type FeedFilter,
+} from '../components/FeedFilterTabs';
 import { PaidPostCard } from '../components/PaidPostCard';
 import { PostCard } from '../components/PostCard';
 import type { Post } from '../types/feed';
@@ -18,6 +27,8 @@ import { colors } from '../tokens/colors';
 import { spacing } from '../tokens/spacing';
 
 export const FeedScreen = () => {
+  const [activeFilter, setActiveFilter] = React.useState<FeedFilter>('all');
+
   const {
     data,
     isPending,
@@ -28,16 +39,19 @@ export const FeedScreen = () => {
     isFetchingNextPage,
     isRefetching,
   } = useInfiniteQuery({
-    queryKey: ['feed'],
+    queryKey: ['feed', activeFilter],
     initialPageParam: null as string | null,
     queryFn: ({ pageParam }) =>
       getPosts({
         cursor: pageParam,
         limit: 10,
+        tier: activeFilter === 'all' ? undefined : activeFilter,
       }),
     getNextPageParam: (lastPage) =>
       lastPage.data.hasMore ? lastPage.data.nextCursor : null,
   });
+
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const posts = data?.pages.flatMap((page) => page.data.posts) ?? [];
 
@@ -48,6 +62,12 @@ export const FeedScreen = () => {
   };
 
   const renderItem = ({ item }: { item: Post }) => {
+    const handlePress = () => {
+      navigation.navigate('PostDetail', {
+        postId: item.id,
+      });
+    };
+
     if (item.tier === 'paid') {
       return (
         <PaidPostCard
@@ -59,16 +79,18 @@ export const FeedScreen = () => {
     }
 
     return (
-      <PostCard
-        authorName={item.author.displayName}
-        authorAvatar={item.author.avatarUrl}
-        imageUrl={item.coverUrl}
-        title={item.title}
-        previewText={item.preview}
-        likesCount={item.likesCount}
-        isLiked={item.isLiked}
-        commentsCount={item.commentsCount}
-      />
+      <Pressable onPress={handlePress}>
+        <PostCard
+          authorName={item.author.displayName}
+          authorAvatar={item.author.avatarUrl}
+          imageUrl={item.coverUrl}
+          title={item.title}
+          previewText={item.preview}
+          likesCount={item.likesCount}
+          commentsCount={item.commentsCount}
+          isLiked={item.isLiked}
+        />
+      </Pressable>
     );
   };
 
@@ -92,6 +114,10 @@ export const FeedScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <FeedFilterTabs
+        activeFilter={activeFilter}
+        onChange={setActiveFilter}
+      />
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
@@ -124,7 +150,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   content: {
-    paddingVertical: spacing.md,
+    paddingBottom: spacing.md,
   },
   loader: {
     flex: 1,

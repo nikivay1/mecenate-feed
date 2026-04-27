@@ -40,3 +40,27 @@ export type ErrorResponse = {
     message?: string;
   };
 };
+
+export type Comment = {
+  id: string;
+  postId: string;
+  author: Author;
+  text: string;
+  createdAt: string;
+};
+
+export type PostDetailResponse = {
+  ok: boolean;
+  data: {
+    post: Post;
+  };
+};
+
+export type CommentsResponse = {
+  ok: boolean;
+  data: {
+    comments: Comment[];
+    nextCursor: string | null;
+    hasMore: boolean;
+  };
+};
