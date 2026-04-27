@@ -64,3 +64,11 @@ export type CommentsResponse = {
     hasMore: boolean;
   };
 };
+
+export type LikePostResponse = {
+  ok: boolean;
+  data: {
+    isLiked: boolean;
+    likesCount: number;
+  };
+};

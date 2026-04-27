@@ -18,6 +18,7 @@ import { CommentsSectionHeader } from '../components/CommentsSectionHeader';
 import { getPostById, getPostComments } from '../api/feed';
 import { CommentItem } from '../components/CommentItem';
 import { ErrorState } from '../components/ErrorState';
+import { useTogglePostLike } from '../hooks/useTogglePostLike';
 import type { RootStackParamList } from '../navigation/types';
 import type { Comment } from '../types/feed';
 import { colors } from '../tokens/colors';
@@ -33,6 +34,7 @@ export const PostDetailScreen = ({
   navigation,
 }: PostDetailScreenProps) => {
   const { postId } = route.params;
+  const toggleLikeMutation = useTogglePostLike();
 
   const {
     data: postData,
@@ -124,6 +126,11 @@ export const PostDetailScreen = ({
                 likesCount={post.likesCount}
                 commentsCount={post.commentsCount}
                 isLiked={post.isLiked}
+                isLikeLoading={
+                  toggleLikeMutation.isPending &&
+                  toggleLikeMutation.variables?.id === post.id
+                }
+                onLikePress={() => toggleLikeMutation.mutate(post)}
               />
 
               <CommentsSectionHeader commentsCount={post.commentsCount} />

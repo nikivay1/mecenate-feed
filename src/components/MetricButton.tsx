@@ -1,5 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  type GestureResponderEvent,
+  Pressable,
+  StyleSheet,
+  Text,
+} from 'react-native';
 import { colors } from '../tokens/colors';
 import { radius } from '../tokens/radius';
 import { spacing } from '../tokens/spacing';
@@ -12,12 +17,16 @@ type MetricButtonProps = {
   kind: 'like' | 'comment';
   count: number;
   active?: boolean;
+  disabled?: boolean;
+  onPress?: () => void;
 };
 
 export const MetricButton = ({
   kind,
   count,
   active = false,
+  disabled = false,
+  onPress,
 }: MetricButtonProps) => {
   const Icon =
     kind === 'like'
@@ -25,12 +34,31 @@ export const MetricButton = ({
         ? LikeIconChecd
         : LikeIcon
       : CommentIcon;
+  const isPressable = Boolean(onPress) && !disabled;
+
+  const handlePress = (event: GestureResponderEvent) => {
+    event.stopPropagation();
+    onPress?.();
+  };
 
   return (
-    <View style={[styles.container, active && styles.activeContainer]}>
-      <Icon style={[styles.icon, active && styles.iconActive]} />
+    <Pressable
+      accessibilityRole={isPressable ? 'button' : undefined}
+      disabled={!isPressable}
+      onPress={handlePress}
+      style={({ pressed }) => [
+        styles.container,
+        active && styles.activeContainer,
+        disabled && styles.disabled,
+        pressed && styles.pressed,
+      ]}
+    >
+      <Icon
+        color={active ? colors.surface : colors.textSecondary}
+        style={styles.icon}
+      />
       <Text style={[styles.count, active && styles.activeText]}>{count}</Text>
-    </View>
+    </Pressable>
   );
 };
 
@@ -47,13 +75,16 @@ const styles = StyleSheet.create({
   activeContainer: {
     backgroundColor: '#FF4D94',
   },
+  disabled: {
+    opacity: 0.64,
+  },
+  pressed: {
+    opacity: 0.8,
+  },
   icon: {
     color: colors.textSecondary,
     height: 24,
     width: 24
-  },
-  iconActive: {
-    color: colors.surface
   },
   count: {
     fontSize: 12,

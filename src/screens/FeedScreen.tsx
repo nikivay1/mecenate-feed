@@ -20,6 +20,7 @@ import {
   FeedFilterTabs,
   type FeedFilter,
 } from '../components/FeedFilterTabs';
+import { useTogglePostLike } from '../hooks/useTogglePostLike';
 import { PaidPostCard } from '../components/PaidPostCard';
 import { PostCard } from '../components/PostCard';
 import type { Post } from '../types/feed';
@@ -28,6 +29,7 @@ import { spacing } from '../tokens/spacing';
 
 export const FeedScreen = () => {
   const [activeFilter, setActiveFilter] = React.useState<FeedFilter>('all');
+  const toggleLikeMutation = useTogglePostLike();
 
   const {
     data,
@@ -89,6 +91,11 @@ export const FeedScreen = () => {
           likesCount={item.likesCount}
           commentsCount={item.commentsCount}
           isLiked={item.isLiked}
+          isLikeLoading={
+            toggleLikeMutation.isPending &&
+            toggleLikeMutation.variables?.id === item.id
+          }
+          onLikePress={() => toggleLikeMutation.mutate(item)}
         />
       </Pressable>
     );

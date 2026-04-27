@@ -36,7 +36,7 @@ export const CommentItem = ({
           <LikeIcon
             width={22}
             height={22}
-            style={[styles.likeIcon, isLiked && styles.likeIconActive]}
+            color={isLiked ? '#FF4D94' : colors.textSecondary}
           />
           <Text style={[styles.likesCount, isLiked && styles.likesCountActive]}>
             {likesCount}
@@ -86,12 +86,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     gap: 6,
     paddingTop: 4,
-  },
-  likeIcon: {
-    color: colors.textSecondary,
-  },
-  likeIconActive: {
-    color: '#FF4D94',
   },
   likesCount: {
     fontSize: 16,

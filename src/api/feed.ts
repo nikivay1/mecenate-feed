@@ -1,6 +1,7 @@
 import { apiFetch } from './client';
 import type {
   CommentsResponse,
+  LikePostResponse,
   PostDetailResponse,
   PostsResponse,
 } from '../types/feed';
@@ -63,4 +64,10 @@ export async function getPostComments({
   return apiFetch<CommentsResponse>(
     `/posts/${postId}/comments?${params.toString()}`
   );
+}
+
+export async function togglePostLike(postId: string): Promise<LikePostResponse> {
+  return apiFetch<LikePostResponse>(`/posts/${postId}/like`, {
+    method: 'POST',
+  });
 }
